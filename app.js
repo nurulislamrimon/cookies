@@ -1,8 +1,22 @@
-const input = document.getElementById("input");
+const displayCartInitial = () => {
+    const cart = getOrCreateCart();
+    for (const name in cart) {
+        displayProducts(name);
+    }
+}
 
 document.getElementById("add").addEventListener("click", () => {
-    displayProducts(input.value);
-    addToCartStorage(input.value)
+    const inputBox = document.getElementById("input");
+    const input = inputBox.value;
+
+    if (!input) {
+        return;
+    }
+
+    displayProducts(input);
+    addToCartStorage(input);
+
+    inputBox.value = "";
 
 });
 // add to cart
@@ -12,7 +26,7 @@ const displayProducts = input => {
     newItem.innerText = input;
     items.appendChild(newItem);
 }
-const getCartOnStorage = () => {
+const getOrCreateCart = () => {
     const cart = localStorage.getItem("cart");
     let cartObj;
     if (cart) {
@@ -24,8 +38,19 @@ const getCartOnStorage = () => {
     return cartObj;
 };
 const addToCartStorage = name => {
-    const cart = getCartOnStorage();
-    cart[name] = 1;
+    const cart = getOrCreateCart();
+    if (cart[name]) {
+        cart[name] += 1;
+    }
+    else { cart[name] = 1; }
     const cartString = JSON.stringify(cart);
     localStorage.setItem("cart", cartString);
+}
+// display cart items initial time
+displayCartInitial();
+
+// buy now
+const buyNow = () => {
+    localStorage.removeItem('cart');
+    document.getElementById("items-container").textContent = "";
 }
